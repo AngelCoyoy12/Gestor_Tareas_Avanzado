@@ -7,11 +7,12 @@ class ManejadorTareas:
         self.tareas = []
         self.tareas_completadas = []
 
-    def agregar_tarea(self, tarea, prioridad, fecha):
+    def agregar_tarea(self, tarea, prioridad, fecha, hora):
         nueva_tarea = {
             "tarea": tarea,
             "prioridad": prioridad,
             "fecha": fecha,
+            "hora": hora,
             "completada": False
         }
         self.tareas.append(nueva_tarea)
@@ -27,12 +28,13 @@ class ManejadorTareas:
             return self._formato_tarea(self.tareas[indice])
         return None
 
-    def modificar_tarea(self, indice, tarea, prioridad, fecha):
+    def modificar_tarea(self, indice, tarea, prioridad, fecha, hora):
         if 0 <= indice < len(self.tareas):
             self.tareas[indice].update({
                 "tarea": tarea,
                 "prioridad": prioridad,
-                "fecha": fecha
+                "fecha": fecha,
+                "hora": hora
             })
             return self._formato_tarea(self.tareas[indice])
         return None
@@ -61,4 +63,4 @@ class ManejadorTareas:
 
     def _formato_tarea(self, tarea):
         estado = "Completada" if tarea["completada"] else "Pendiente"
-        return f"{tarea['tarea']} | Prioridad: {tarea['prioridad']} | Fecha: {tarea['fecha']} | Estado: {estado}"
+        return f"{tarea['tarea']} | Prioridad: {tarea['prioridad']} | Fecha: {tarea['fecha']} | Hora: {tarea['hora']} | Estado: {estado}"

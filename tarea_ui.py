@@ -1,5 +1,3 @@
-# tarea_ui.py
-
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
 from tkcalendar import DateEntry
@@ -24,11 +22,23 @@ class VentanaEmergente(simpledialog.Dialog):
         self.fecha_limite = DateEntry(master, width=12, background='darkblue', foreground='white', borderwidth=2, date_pattern='yyyy-mm-dd')
         self.fecha_limite.grid(row=2, column=1, sticky="w", padx=5, pady=5)
 
+        tk.Label(master, text="Hora límite:").grid(row=3, column=0, sticky="e")
+        self.hora_limite = tk.StringVar(value="00:00")
+        self.spin_hora = tk.Spinbox(master, from_=0, to=23, width=2, textvariable=self.hora_limite, format="%02.0f")
+        self.spin_hora.grid(row=3, column=1, sticky="w", padx=5, pady=5)
+        tk.Label(master, text=":").grid(row=3, column=1)
+        self.spin_minuto = tk.Spinbox(master, from_=0, to=59, width=2, format="%02.0f")
+        self.spin_minuto.grid(row=3, column=1, sticky="w", padx=30, pady=5)
+
         if self.tarea:
             partes = self.tarea.split(" | ")
             self.e1.insert(0, partes[0])
             self.prioridad.set(partes[1].split(": ")[1])
             self.fecha_limite.set_date(datetime.datetime.strptime(partes[2].split(": ")[1], "%Y-%m-%d").date())
+            hora = partes[3].split(": ")[1]
+            self.hora_limite.set(hora.split(":")[0])
+            self.spin_minuto.delete(0, tk.END)
+            self.spin_minuto.insert(0, hora.split(":")[1])
 
         return self.e1  # initial focus
 
@@ -36,7 +46,9 @@ class VentanaEmergente(simpledialog.Dialog):
         tarea = self.e1.get()
         prioridad = self.prioridad.get()
         fecha = self.fecha_limite.get_date().strftime("%Y-%m-%d")
-        self.result = (tarea, prioridad, fecha)
+        hora = f"{self.hora_limite.get()}:{self.spin_minuto.get()}"
+        self.result = (tarea, prioridad, fecha, hora)
+
 
 class AplicacionListaTareas:
     def __init__(self, master):
@@ -106,14 +118,14 @@ class AplicacionListaTareas:
     def agregar_tarea(self):
         dialogo = VentanaEmergente(self.master, "Agregar Nueva Tarea")
         if dialogo.result:
-            tarea, prioridad, fecha = dialogo.result
+            tarea, prioridad, fecha, hora = dialogo.result
             if tarea:
-                nueva_tarea = self.manejador_tareas.agregar_tarea(tarea, prioridad, fecha)
-                self.lista_tareas.insert(tk.END, nueva_tarea)
-                self.actualizar_todas_las_listas()
+                nueva_tarea = self.manejador_tareas.agregar_tarea(tarea, prioridad, fecha, hora)
+                self.lista_tareas.insert(tk.END, nueva_tarea)  # Agregar la tarea a la lista
+                self.actualizar_todas_las_listas()  # Actualizar las listas después de agregar
             else:
                 messagebox.showwarning("Entrada Inválida", "Por favor, ingrese una tarea válida")
-    
+
     def eliminar_tarea(self):
         try:
             indice = self.lista_tareas.curselection()[0]
@@ -130,9 +142,9 @@ class AplicacionListaTareas:
             if tarea_actual:
                 dialogo = VentanaEmergente(self.master, "Modificar Tarea", tarea_actual)
                 if dialogo.result:
-                    tarea, prioridad, fecha = dialogo.result
+                    tarea, prioridad, fecha, hora = dialogo.result
                     if tarea:
-                        self.manejador_tareas.modificar_tarea(indice, tarea, prioridad, fecha)
+                        self.manejador_tareas.modificar_tarea(indice, tarea, prioridad, fecha, hora)
                         self.actualizar_todas_las_listas()
                     else:
                         messagebox.showwarning("Entrada Inválida", "Por favor, ingrese una tarea válida")
