@@ -111,7 +111,7 @@ class AplicacionListaTareas:
         botones_frame.pack(fill=tk.X)
         
         tk.Button(botones_frame, text="Eliminar Tarea", command=self.eliminar_tarea).pack(side=tk.LEFT, padx=5)
-        tk.Button(botones_frame, text="Filtrar por Prioridad", command=self.filtrar_por_prioridad).pack(side=tk.LEFT, padx=5)
+        tk.Button(botones_frame, text="Ordenar por Prioridad", command=self.ordenar_por_prioridad).pack(side=tk.LEFT, padx=5)  # Cambiado el texto del botón
         tk.Button(botones_frame, text="Mostrar Todas", command=self.mostrar_todas).pack(side=tk.LEFT, padx=5)
         tk.Button(botones_frame, text="Actualizar Listas", command=self.actualizar_todas_las_listas).pack(side=tk.LEFT, padx=5)
         tk.Button(botones_frame, text="Salir", command=self.master.quit).pack(side=tk.RIGHT, padx=5)
@@ -161,11 +161,11 @@ class AplicacionListaTareas:
         except IndexError:
             messagebox.showwarning("Selección Vacía", "Por favor, seleccione una tarea para marcar como completada")
     
-    def filtrar_por_prioridad(self):
-        prioridad = simpledialog.askstring("Filtrar por Prioridad", "Ingrese la prioridad (Alta, Media, Baja):")
-        if prioridad:
-            tareas_filtradas = self.manejador_tareas.filtrar_por_prioridad(prioridad)
-            self.actualizar_lista_tareas(self.lista_tareas, tareas_filtradas)
+    def ordenar_por_prioridad(self):
+        tareas_ordenadas = self.manejador_tareas.ordenar_por_prioridad()
+        self.actualizar_lista_tareas(self.lista_tareas, tareas_ordenadas)
+        messagebox.showinfo("Tareas Ordenadas", "Las tareas han sido ordenadas por prioridad de Alta a Baja.")
+
             
     def actualizar_periodicamente(self):
         self.actualizar_todas_las_listas()

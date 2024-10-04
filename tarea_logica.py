@@ -96,3 +96,10 @@ class ManejadorTareas:
             self.tareas_completadas.append(tarea)
 
         return tareas_fuera_tiempo
+    
+    def ordenar_por_prioridad(self):
+        def prioridad_a_numero(prioridad):
+            return {'Alta': 3, 'Media': 2, 'Baja': 1}.get(prioridad, 0)
+
+        self.tareas.sort(key=lambda x: prioridad_a_numero(x['prioridad']), reverse=True)
+        return [self._formato_tarea(tarea) for tarea in self.tareas]
