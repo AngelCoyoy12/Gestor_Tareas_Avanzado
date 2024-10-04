@@ -5,6 +5,7 @@ from datetime import datetime
 class ManejadorTareas:
     def __init__(self):
         self.tareas = []
+        self.tareas_fuera_de_tiempo = []
         self.tareas_completadas = []
 
     def agregar_tarea(self, tarea, prioridad, fecha, hora):
@@ -46,21 +47,52 @@ class ManejadorTareas:
             self.tareas_completadas.append(tarea_completada)
             return self._formato_tarea(tarea_completada)
         return None
+    
+    def verificar_tareas_vencidas(self):
+        ahora = datetime.now()
+        tareas_vencidas = []
+        tareas_actualizadas = []
+
+        for tarea in self.tareas:
+            fecha_hora_limite = datetime.strptime(f"{tarea['fecha']} {tarea['hora']}", "%Y-%m-%d %H:%M")
+            if fecha_hora_limite < ahora and not tarea["completada"]:
+                tareas_vencidas.append(tarea)
+            else:
+                tareas_actualizadas.append(tarea)
+
+        self.tareas = tareas_actualizadas
+        self.tareas_fuera_de_tiempo.extend(tareas_vencidas)
+        return tareas_vencidas
 
     def filtrar_por_prioridad(self, prioridad):
         return [self._formato_tarea(tarea) for tarea in self.tareas if tarea["prioridad"] == prioridad]
 
     def obtener_todas_las_tareas(self):
+        self.verificar_tareas_vencidas()
         return [self._formato_tarea(tarea) for tarea in self.tareas]
 
     def obtener_tareas_fuera_de_tiempo(self):
-        hoy = datetime.now().date()
-        return [self._formato_tarea(tarea) for tarea in self.tareas 
-                if datetime.strptime(tarea["fecha"], "%Y-%m-%d").date() < hoy and not tarea["completada"]]
-
+        return [self._formato_tarea(tarea) for tarea in self.tareas_fuera_de_tiempo]
+        
     def obtener_tareas_completadas(self):
         return [self._formato_tarea(tarea) for tarea in self.tareas_completadas]
 
     def _formato_tarea(self, tarea):
         estado = "Completada" if tarea["completada"] else "Pendiente"
         return f"{tarea['tarea']} | Prioridad: {tarea['prioridad']} | Fecha: {tarea['fecha']} | Hora: {tarea['hora']} | Estado: {estado}"
+
+    def verificar_tareas_fuera_de_tiempo(self):
+        hoy = datetime.now()
+        tareas_fuera_tiempo = []
+
+        for tarea in self.tareas:
+            fecha_hora_limite = datetime.strptime(f"{tarea['fecha']} {tarea['hora']}", "%Y-%m-%d %H:%M")
+            if fecha_hora_limite < hoy and not tarea["completada"]:
+                tareas_fuera_tiempo.append(tarea)
+
+        # Mueve las tareas fuera de tiempo
+        for tarea in tareas_fuera_tiempo:
+            self.tareas.remove(tarea)
+            self.tareas_completadas.append(tarea)
+
+        return tareas_fuera_tiempo

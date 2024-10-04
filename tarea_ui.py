@@ -59,6 +59,7 @@ class AplicacionListaTareas:
         self.manejador_tareas = ManejadorTareas()
         
         self.crear_widgets()
+        self.actualizar_periodicamente()  # Iniciar la actualización periódica
         
     def crear_widgets(self):
         main_frame = tk.Frame(self.master, padx=10, pady=10)
@@ -165,6 +166,10 @@ class AplicacionListaTareas:
         if prioridad:
             tareas_filtradas = self.manejador_tareas.filtrar_por_prioridad(prioridad)
             self.actualizar_lista_tareas(self.lista_tareas, tareas_filtradas)
+            
+    def actualizar_periodicamente(self):
+        self.actualizar_todas_las_listas()
+        self.master.after(60000, self.actualizar_periodicamente)  # Actualizar cada minuto        
     
     def mostrar_todas(self):
         self.actualizar_todas_las_listas()
@@ -175,6 +180,11 @@ class AplicacionListaTareas:
             listbox.insert(tk.END, tarea)
     
     def actualizar_todas_las_listas(self):
+        # Verificar y mover tareas vencidas
+        tareas_vencidas = self.manejador_tareas.verificar_tareas_vencidas()
+        if tareas_vencidas:
+            messagebox.showinfo("Tareas Vencidas", f"{len(tareas_vencidas)} tarea(s) han vencido y se han movido a la pestaña de Tareas Fuera de Tiempo.")
+
         todas_las_tareas = self.manejador_tareas.obtener_todas_las_tareas()
         self.actualizar_lista_tareas(self.lista_tareas, todas_las_tareas)
         
@@ -183,3 +193,4 @@ class AplicacionListaTareas:
         
         tareas_completadas = self.manejador_tareas.obtener_tareas_completadas()
         self.actualizar_lista_tareas(self.lista_tareas_completadas, tareas_completadas)
+
