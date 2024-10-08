@@ -40,12 +40,20 @@ class ManejadorTareas:
             return self._formato_tarea(self.tareas[indice])
         return None
 
-    def marcar_como_completada(self, indice):
-        if 0 <= indice < len(self.tareas):
-            self.tareas[indice]["completada"] = True
-            tarea_completada = self.tareas.pop(indice)
-            self.tareas_completadas.append(tarea_completada)
-            return self._formato_tarea(tarea_completada)
+    def marcar_como_completada(self, indice, desde_fuera_tiempo=False):
+        if desde_fuera_tiempo:
+            if 0 <= indice < len(self.tareas_fuera_de_tiempo):
+                tarea_completada = self.tareas_fuera_de_tiempo.pop(indice)
+                tarea_completada["completada"] = True
+                tarea_completada["fuera_de_tiempo"] = True
+                self.tareas_completadas.append(tarea_completada)
+                return self._formato_tarea(tarea_completada)
+        else:
+            if 0 <= indice < len(self.tareas):
+                tarea_completada = self.tareas.pop(indice)
+                tarea_completada["completada"] = True
+                self.tareas_completadas.append(tarea_completada)
+                return self._formato_tarea(tarea_completada)
         return None
     
     def verificar_tareas_vencidas(self):
