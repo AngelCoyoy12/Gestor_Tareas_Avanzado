@@ -9,4 +9,4 @@ def main():
     root.mainloop() #Mantiene la ventana activa
 
 if __name__ == "__main__":
-    main()
+    main()  
