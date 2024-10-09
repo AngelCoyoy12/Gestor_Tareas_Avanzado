@@ -10,7 +10,6 @@ class VentanaEmergente(simpledialog.Dialog):
         super().__init__(parent, title)
 
     def body(self, master):
-        # El código del método body permanece igual
         tk.Label(master, text="Tarea:").grid(row=0, column=0, sticky="e")
         self.e1 = tk.Entry(master, width=50)
         self.e1.grid(row=0, column=1, padx=5, pady=5)
@@ -81,7 +80,6 @@ class AplicacionListaTareas:
         botones_frame = tk.Frame(parent)
         botones_frame.pack(fill=tk.X, pady=10)
         
-        # Crear botones y guardarlos en la lista de botones modificables
         btn_agregar = tk.Button(botones_frame, text="Agregar Tarea", command=self.agregar_tarea, width=20)
         btn_agregar.pack(side=tk.LEFT, padx=5)
         self.botones_modificables.append(btn_agregar)
@@ -102,7 +100,6 @@ class AplicacionListaTareas:
         self.crear_pestana_tareas_fuera_de_tiempo()
         self.crear_pestana_tareas_completadas()
         
-        # Agregar el evento de cambio de pestaña
         self.notebook.bind("<<NotebookTabChanged>>", self.actualizar_estado_botones)
         
     def crear_pestana_tareas_pendientes(self):
@@ -127,31 +124,24 @@ class AplicacionListaTareas:
         self.lista_tareas_completadas.pack(fill=tk.BOTH, expand=True, pady=10)
 
     def actualizar_estado_botones(self, event=None):
-        # Obtener el índice de la pestaña actual
         pestana_actual = self.notebook.select()
         indice_pestana = self.notebook.index(pestana_actual)
         
-        # Habilitar/deshabilitar botones según la pestaña
         for boton in self.botones_modificables:
             if boton['text'] == "Marcar como Completada":
-                # El botón de marcar como completada estará habilitado en las pestañas de pendientes y fuera de tiempo
                 boton['state'] = 'normal' if indice_pestana in [0, 1] else 'disabled'
             else:
-                # Los demás botones solo están habilitados en la pestaña de pendientes
                 boton['state'] = 'normal' if indice_pestana == 0 else 'disabled'
 
     def crear_botones_secundarios(self, parent):
         botones_frame = tk.Frame(parent)
         botones_frame.pack(fill=tk.X)
         
-        # Crear botón eliminar y agregarlo a la lista de botones modificables
         btn_eliminar = tk.Button(botones_frame, text="Eliminar Tarea", command=self.eliminar_tarea)
         btn_eliminar.pack(side=tk.LEFT, padx=5)
         self.botones_modificables.append(btn_eliminar)
         
-        # Estos botones siempre estarán activos
         tk.Button(botones_frame, text="Ordenar por Prioridad", command=self.ordenar_por_prioridad).pack(side=tk.LEFT, padx=5)
-        tk.Button(botones_frame, text="Mostrar Todas", command=self.mostrar_todas).pack(side=tk.LEFT, padx=5)
         tk.Button(botones_frame, text="Actualizar Listas", command=self.actualizar_todas_las_listas).pack(side=tk.LEFT, padx=5)
         tk.Button(botones_frame, text="Salir", command=self.master.quit).pack(side=tk.RIGHT, padx=5)
 
@@ -168,17 +158,14 @@ class AplicacionListaTareas:
             indice = listbox.size()
             listbox.insert(tk.END, tarea)
             
-            # Obtener la prioridad de la tarea
             prioridad = self.obtener_prioridad_de_tarea(tarea)
             
-            # Aplicar el color correspondiente
             if prioridad in self.colores_prioridad:
                 listbox.itemconfig(
                     indice,
                     {'bg': self.colores_prioridad[prioridad]}
                 )
 
-    # Los demás métodos permanecen igual
     def actualizar_todas_las_listas(self):
         tareas_vencidas = self.manejador_tareas.verificar_tareas_vencidas()
         if tareas_vencidas:
@@ -245,7 +232,6 @@ class AplicacionListaTareas:
                         messagebox.showinfo("Tarea Completada", "La tarea ha sido marcada como completada con retraso")
         except IndexError:
             messagebox.showwarning("Selección Vacía", "Por favor, seleccione una tarea para marcar como completada")
-
 
     def ordenar_por_prioridad(self):
         tareas_ordenadas = self.manejador_tareas.ordenar_por_prioridad()
