@@ -15,7 +15,7 @@ class ManejadorTareas:
         self.iniciar_verificador_notificaciones()
 
     def crear_notificacion(self, titulo, mensaje):
-        """Crea y muestra una notificación del sistema"""
+        # Crea y muestra una notificación del sistema
         notificacion = Notify()
         notificacion.title = titulo
         notificacion.message = mensaje
@@ -26,7 +26,7 @@ class ManejadorTareas:
             print(f"Error al enviar notificación: {e}")
 
     def verificar_proximidad_vencimiento(self, tarea):
-        """Verifica si una tarea está próxima a vencer y envía notificaciones apropiadas"""
+        # Verifica si una tarea está próxima a vencer y envía notificaciones apropiadas
         if tarea["completada"]:
             return
 
@@ -45,7 +45,7 @@ class ManejadorTareas:
         if tiempo_restante.total_seconds() < 0:  # Tarea vencida
             if self.notificaciones_enviadas.get(tarea_id, {}).get('vencida') != True:
                 self.crear_notificacion(
-                    "¡Tarea Vencida!",
+                    "Mala suerta",
                     f"La tarea '{tarea['tarea']}' ha vencido."
                 )
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['vencida'] = True
@@ -53,7 +53,7 @@ class ManejadorTareas:
         elif 0 <= minutos_restantes <= 30:  # 30 minutos o menos
             if self.notificaciones_enviadas.get(tarea_id, {}).get('30min') != True:
                 self.crear_notificacion(
-                    "¡Advertencia de Tarea!",
+                    "Advertencia de Tarea",
                     f"La tarea '{tarea['tarea']}' vence en menos de 30 minutos."
                 )
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['30min'] = True
@@ -67,12 +67,12 @@ class ManejadorTareas:
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['1hora'] = True
 
     def verificar_todas_las_tareas(self):
-        """Verifica todas las tareas pendientes para notificaciones"""
+        # Verifica todas las tareas pendientes para notificaciones
         for tarea in self.tareas:
             self.verificar_proximidad_vencimiento(tarea)
 
     def iniciar_verificador_notificaciones(self):
-        """Inicia un hilo para verificar periódicamente las notificaciones"""
+        # Inicia un hilo para verificar periódicamente las notificaciones
         def verificador():
             while True:
                 self.verificar_todas_las_tareas()
