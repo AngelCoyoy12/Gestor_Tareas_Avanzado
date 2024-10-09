@@ -183,7 +183,7 @@ class AplicacionListaTareas:
         tareas_vencidas = self.manejador_tareas.verificar_tareas_vencidas()
         if tareas_vencidas:
             messagebox.showinfo("Tareas Vencidas", 
-                              f"{len(tareas_vencidas)} tarea(s) han vencido y se han movido a la pestaña de Tareas Fuera de Tiempo.")
+                f"{len(tareas_vencidas)} tarea(s) han vencido y se han movido a la pestaña de Tareas Fuera de Tiempo.")
 
         todas_las_tareas = self.manejador_tareas.obtener_todas_las_tareas()
         self.actualizar_lista_tareas(self.lista_tareas, todas_las_tareas)
@@ -239,8 +239,7 @@ class AplicacionListaTareas:
                     self.actualizar_todas_las_listas()
             elif pestana_actual == 1:  # Tareas fuera de tiempo
                 indice = self.lista_tareas_fuera_tiempo.curselection()[0]
-                if messagebox.askyesno("Confirmar", "¿Marcar esta tarea como completada?"):
-                    # Marcar como completada desde tareas fuera de tiempo
+                if messagebox.askyesno("Confirmar", "¿Marcar esta tarea como completada con retraso?"):
                     if self.manejador_tareas.marcar_como_completada(indice, desde_fuera_tiempo=True):
                         self.actualizar_todas_las_listas()
                         messagebox.showinfo("Tarea Completada", "La tarea ha sido marcada como completada con retraso")

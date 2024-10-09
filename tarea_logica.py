@@ -52,6 +52,7 @@ class ManejadorTareas:
             if 0 <= indice < len(self.tareas):
                 tarea_completada = self.tareas.pop(indice)
                 tarea_completada["completada"] = True
+                tarea_completada["fuera_de_tiempo"] = False
                 self.tareas_completadas.append(tarea_completada)
                 return self._formato_tarea(tarea_completada)
         return None
@@ -86,7 +87,12 @@ class ManejadorTareas:
         return [self._formato_tarea(tarea) for tarea in self.tareas_completadas]
 
     def _formato_tarea(self, tarea):
-        estado = "Completada" if tarea["completada"] else "Pendiente"
+        estado = "Completada"
+        if tarea.get("completada"):
+            if tarea.get("fuera_de_tiempo"):
+                estado = "Completada con retraso"
+        else:
+            estado = "Pendiente"
         return f"{tarea['tarea']} | Prioridad: {tarea['prioridad']} | Fecha: {tarea['fecha']} | Hora: {tarea['hora']} | Estado: {estado}"
 
     def verificar_tareas_fuera_de_tiempo(self):
