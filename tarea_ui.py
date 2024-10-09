@@ -3,6 +3,7 @@ from tkinter import messagebox, simpledialog, ttk
 from tkcalendar import DateEntry
 import datetime
 from tarea_logica import ManejadorTareas
+from PIL import Image, ImageTk
 
 class VentanaEmergente(simpledialog.Dialog):
     def __init__(self, parent, title, tarea=None):
@@ -55,45 +56,93 @@ class AplicacionListaTareas:
         self.master.title("Lista de Tareas Avanzada")
         self.master.geometry("700x500")
         
+        # Agregar esta línea después de configurar la geometría
+        self.configurar_fondo()
+        
         self.manejador_tareas = ManejadorTareas()
         
         self.colores_prioridad = {
-            "Alta": "#ffcccc",  # Rojo claro
-            "Media": "#ffffcc",  # Amarillo claro
-            "Baja": "#ccffcc"   # Verde claro
+            "Alta": "#ffcccc",
+            "Media": "#ffffcc",
+            "Baja": "#ccffcc"
         }
         
-        self.botones_modificables = []  # Lista para almacenar los botones que se desactivarán
+        self.botones_modificables = []
         self.crear_widgets()
         self.actualizar_periodicamente()
         
+    def configurar_fondo(self):
+        try:
+            # Cargar y redimensionar la imagen de fondo
+            imagen = Image.open("imagen_2024-10-09_083216617-removebg-preview.png")  # Ajusta la ruta según tu imagen
+            
+            # Obtener dimensiones de la ventana
+            ancho_ventana = self.master.winfo_screenwidth()
+            alto_ventana = self.master.winfo_screenheight()
+            
+            # Redimensionar la imagen
+            imagen_redimensionada = imagen.resize((ancho_ventana, alto_ventana))
+            
+            # Convertir la imagen para Tkinter
+            self.imagen_fondo = ImageTk.PhotoImage(imagen_redimensionada)
+            
+            # Crear label para el fondo
+            self.fondo_label = tk.Label(self.master, image=self.imagen_fondo)
+            self.fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+            
+            # Poner el fondo detrás de todo
+            self.fondo_label.lower()
+            
+        except Exception as e:
+            print(f"Error al cargar la imagen de fondo: {e}")
+            self.master.configure(bg='#f0f0f0')
 
     def crear_widgets(self):
-        main_frame = tk.Frame(self.master, padx=10, pady=10)
-        main_frame.pack(fill=tk.BOTH, expand=True)
+    # Crear frame principal con fondo semi-transparente
+        self.main_frame = tk.Frame(self.master, padx=10, pady=10)
+        self.main_frame.pack(fill=tk.BOTH, expand=True)
         
-        self.crear_botones_principales(main_frame)
-        self.crear_pestanas(main_frame)
-        self.crear_botones_secundarios(main_frame)
+        # Configurar transparencia del frame principal
+        self.main_frame.configure(bg='white')
+        
+        self.crear_botones_principales(self.main_frame)
+        self.crear_pestanas(self.main_frame)
+        self.crear_botones_secundarios(self.main_frame)
         
     def crear_botones_principales(self, parent):
         botones_frame = tk.Frame(parent)
         botones_frame.pack(fill=tk.X, pady=10)
         
-        btn_agregar = tk.Button(botones_frame, text="Agregar Tarea", command=self.agregar_tarea, width=20)
+        # Estilo para los botones
+        estilo_boton = {
+            'bg': '#4a90e2',
+            'fg': 'white',
+            'relief': tk.RAISED
+        }
+        
+        btn_agregar = tk.Button(botones_frame, text="Agregar Tarea", 
+                            command=self.agregar_tarea, width=20, **estilo_boton)
         btn_agregar.pack(side=tk.LEFT, padx=5)
         self.botones_modificables.append(btn_agregar)
         
-        btn_modificar = tk.Button(botones_frame, text="Modificar Tarea", command=self.modificar_tarea, width=20)
+        btn_modificar = tk.Button(botones_frame, text="Modificar Tarea", 
+                                command=self.modificar_tarea, width=20, **estilo_boton)
         btn_modificar.pack(side=tk.LEFT, padx=5)
         self.botones_modificables.append(btn_modificar)
         
-        btn_completar = tk.Button(botones_frame, text="Marcar como Completada", command=self.marcar_como_completada, width=20)
+        btn_completar = tk.Button(botones_frame, text="Marcar como Completada", 
+                                command=self.marcar_como_completada, width=20, **estilo_boton)
         btn_completar.pack(side=tk.LEFT, padx=5)
         self.botones_modificables.append(btn_completar)
-        
+            
     def crear_pestanas(self, parent):
-        self.notebook = ttk.Notebook(parent)
+        # Configurar estilo de las pestañas
+        style = ttk.Style()
+        style.configure('Custom.TNotebook', background='white')
+        style.configure('Custom.TNotebook.Tab', padding=[12, 4], 
+                    font=('Arial', 10))
+        
+        self.notebook = ttk.Notebook(parent, style='Custom.TNotebook')
         self.notebook.pack(fill=tk.BOTH, expand=True, pady=10)
         
         self.crear_pestana_tareas_pendientes()
