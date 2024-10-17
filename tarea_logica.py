@@ -1,5 +1,5 @@
 # tarea_logica.py
-
+import babel.numbers
 from datetime import datetime, timedelta
 from notifypy import Notify
 import threading
@@ -19,7 +19,7 @@ class ManejadorTareas:
         notificacion = Notify()
         notificacion.title = titulo
         notificacion.message = mensaje
-        notificacion.icon = "1497619898-jd24_85173.png"  # Puedes personalizar el ícono
+        notificacion.icon = "1497619898-jd24_85173.ico"  # Puedes personalizar el ícono
         try:
             notificacion.send()
         except Exception as e:
@@ -150,7 +150,7 @@ class ManejadorTareas:
                 tarea_id = f"{tarea['tarea']}_{tarea['fecha']}_{tarea['hora']}"
                 if not self.notificaciones_enviadas.get(tarea_id, {}).get('vencida'):
                     self.crear_notificacion(
-                        "¡Tarea Vencida!",
+                        "Tarea Vencida",
                         f"La tarea '{tarea['tarea']}' ha sido movida a tareas vencidas."
                     )
                     self.notificaciones_enviadas.setdefault(tarea_id, {})['vencida'] = True
@@ -205,3 +205,5 @@ class ManejadorTareas:
             self.tareas_fuera_de_tiempo.append(tarea)
 
         return tareas_fuera_tiempo
+
+    

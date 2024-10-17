@@ -1,12 +1,13 @@
 # main.py
 
-import tkinter as tk # Importar tk para uso de interfaz grafica
+import tkinter as tk
 from tarea_ui import AplicacionListaTareas
 
 def main():
-    root = tk.Tk() # Crea la ventana principal
+    root = tk.Tk()
+    root.resizable(False, False)
     app = AplicacionListaTareas(root)
-    root.mainloop() #Mantiene la ventana activa
+    root.mainloop()
 
 if __name__ == "__main__":
-    main()  
+    main() 

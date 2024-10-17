@@ -1,3 +1,5 @@
+#tarea_ui
+import babel.numbers
 import tkinter as tk
 from tkinter import messagebox, simpledialog, ttk
 from tkcalendar import DateEntry
@@ -179,6 +181,8 @@ class AplicacionListaTareas:
         for boton in self.botones_modificables:
             if boton['text'] == "Marcar como Completada":
                 boton['state'] = 'normal' if indice_pestana in [0, 1] else 'disabled'
+            elif boton['text'] == "Eliminar Tarea":
+                boton['state'] = 'normal' if indice_pestana in [0, 2] else 'disabled'
             else:
                 boton['state'] = 'normal' if indice_pestana == 0 else 'disabled'
 
@@ -241,11 +245,19 @@ class AplicacionListaTareas:
                 messagebox.showwarning("Entrada Inválida", "Por favor llene todos los campos asignados")
 
     def eliminar_tarea(self):
+        pestana_actual = self.notebook.index(self.notebook.select())
         try:
-            indice = self.lista_tareas.curselection()[0]
-            if messagebox.askyesno("Confirmar Eliminación", "¿Está seguro de eliminar esta tarea?"):
-                self.manejador_tareas.eliminar_tarea(indice)
-                self.actualizar_todas_las_listas()
+            if pestana_actual == 0:  # Tareas pendientes
+                indice = self.lista_tareas.curselection()[0]
+                if messagebox.askyesno("Confirmar Eliminación", "¿Está seguro de eliminar esta tarea?"):
+                    self.manejador_tareas.eliminar_tarea(indice)
+                    self.actualizar_todas_las_listas()
+            elif pestana_actual == 2:  # Tareas completadas
+                indice = self.lista_tareas_completadas.curselection()[0]
+                if messagebox.askyesno("Confirmar Eliminación", "¿Está seguro de eliminar esta tarea completada?"):
+                    if indice < len(self.manejador_tareas.tareas_completadas):
+                        self.manejador_tareas.tareas_completadas.pop(indice)
+                        self.actualizar_todas_las_listas()
         except IndexError:
             messagebox.showwarning("Selección Vacía", "Por favor, seleccione una tarea para eliminar")
     
