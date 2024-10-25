@@ -58,16 +58,38 @@ class AplicacionListaTareas:
         self.master.title("Lista de Tareas Avanzada")
         self.master.geometry("700x500")
         
-        # Agregar esta línea después de configurar la geometría
-        self.configurar_fondo()
-        
         self.manejador_tareas = ManejadorTareas()
+
+        self.configurar_fondo()
+
         
         self.colores_prioridad = {
             "Alta": "#ffcccc",
             "Media": "#ffffcc",
             "Baja": "#ccffcc"
         }
+        
+        # Configurar el estilo para las pestañas transparentes
+        self.style = ttk.Style()
+        self.style.configure('Transparent.TFrame', background='transparent')
+        
+        # Cargar y configurar la imagen de fondo
+        try:
+            # Cargar la imagen
+            imagen = Image.open("imagen_2024-10-09_083216617-removebg-preview.png")  # Asegúrate de tener tu imagen en el directorio
+            
+            # Redimensionar la imagen al tamaño de la ventana
+            imagen = imagen.resize((700, 500), Image.LANCZOS)
+            
+            # Convertir la imagen para tkinter
+            self.imagen_fondo = ImageTk.PhotoImage(imagen)
+            
+            # Crear un label con la imagen de fondo
+            self.fondo_label = tk.Label(self.master, image=self.imagen_fondo)
+            self.fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
+            
+        except Exception as e:
+            print(f"Error al cargar la imagen de fondo: {e}")
         
         self.botones_modificables = []
         self.crear_widgets()
@@ -255,12 +277,11 @@ class AplicacionListaTareas:
             elif pestana_actual == 2:  # Tareas completadas
                 indice = self.lista_tareas_completadas.curselection()[0]
                 if messagebox.askyesno("Confirmar Eliminación", "¿Está seguro de eliminar esta tarea completada?"):
-                    if indice < len(self.manejador_tareas.tareas_completadas):
-                        self.manejador_tareas.tareas_completadas.pop(indice)
+                    if self.manejador_tareas.eliminar_tarea_completada(indice):
                         self.actualizar_todas_las_listas()
         except IndexError:
             messagebox.showwarning("Selección Vacía", "Por favor, seleccione una tarea para eliminar")
-    
+        
     def modificar_tarea(self):
         try:
             indice = self.lista_tareas.curselection()[0]
@@ -290,7 +311,6 @@ class AplicacionListaTareas:
                 if messagebox.askyesno("Confirmar", "¿Marcar esta tarea como completada con retraso?"):
                     if self.manejador_tareas.marcar_como_completada(indice, desde_fuera_tiempo=True):
                         self.actualizar_todas_las_listas()
-                        messagebox.showinfo("Tarea Completada", "La tarea ha sido marcada como completada con retraso")
         except IndexError:
             messagebox.showwarning("Selección Vacía", "Por favor, seleccione una tarea para marcar como completada")
 

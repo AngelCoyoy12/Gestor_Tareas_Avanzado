@@ -6,13 +6,21 @@ from notifypy import Notify
 import threading
 import time
 
+import json
+import os
+import babel.numbers
+from datetime import datetime
+from notifypy import Notify
+import threading
+import time
+
 class ManejadorTareas:
     def __init__(self):
         self.tareas = []
         self.tareas_fuera_de_tiempo = []
         self.tareas_completadas = []
         self.notificaciones_enviadas = {}
-        self.cargar_tareas()  # Cargar tareas al iniciar
+        self.cargar_tareas()
         self.iniciar_verificador_notificaciones()
 
     def crear_notificacion(self, titulo, mensaje):
@@ -35,17 +43,15 @@ class ManejadorTareas:
         minutos_restantes = tiempo_restante.total_seconds() / 60
         tarea_id = f"{tarea['tarea']}_{tarea['fecha']}_{tarea['hora']}"
 
-        if tiempo_restante.total_seconds() < 0:  # Tarea vencida
+        if tiempo_restante.total_seconds() < 0:
             if self.notificaciones_enviadas.get(tarea_id, {}).get('vencida') != True:
                 self.crear_notificacion("Mala suerte", f"La tarea '{tarea['tarea']}' ha vencido.")
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['vencida'] = True
-
-        elif 0 <= minutos_restantes <= 30:  # 30 minutos o menos
+        elif 0 <= minutos_restantes <= 30:
             if self.notificaciones_enviadas.get(tarea_id, {}).get('30min') != True:
                 self.crear_notificacion("Advertencia de Tarea", f"La tarea '{tarea['tarea']}' vence en menos de 30 minutos.")
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['30min'] = True
-
-        elif 30 < minutos_restantes <= 60:  # Entre 30 y 60 minutos
+        elif 30 < minutos_restantes <= 60:
             if self.notificaciones_enviadas.get(tarea_id, {}).get('1hora') != True:
                 self.crear_notificacion("Recordatorio de Tarea", f"La tarea '{tarea['tarea']}' vence en 1 hora.")
                 self.notificaciones_enviadas.setdefault(tarea_id, {})['1hora'] = True
@@ -58,7 +64,7 @@ class ManejadorTareas:
         def verificador():
             while True:
                 self.verificar_todas_las_tareas()
-                time.sleep(60)  # Verificar cada minuto
+                time.sleep(60)
 
         hilo_verificador = threading.Thread(target=verificador, daemon=True)
         hilo_verificador.start()
@@ -77,7 +83,7 @@ class ManejadorTareas:
             with open('tareas.json', 'r') as file:
                 try:
                     data = json.load(file)
-                    if isinstance(data, dict):  # Asegurarse de que sea un diccionario
+                    if isinstance(data, dict):
                         self.tareas = data.get("tareas", [])
                         self.tareas_fuera_de_tiempo = data.get("tareas_fuera_de_tiempo", [])
                         self.tareas_completadas = data.get("tareas_completadas", [])
@@ -92,7 +98,6 @@ class ManejadorTareas:
                     self.tareas_fuera_de_tiempo = []
                     self.tareas_completadas = []
 
-
     def agregar_tarea(self, tarea, prioridad, fecha, hora):
         nueva_tarea = {
             "tarea": tarea,
@@ -102,16 +107,23 @@ class ManejadorTareas:
             "completada": False
         }
         self.tareas.append(nueva_tarea)
-        self.guardar_tareas()  # Guardar tareas después de agregar
+        self.guardar_tareas()
         self.verificar_proximidad_vencimiento(nueva_tarea)
         return self._formato_tarea(nueva_tarea)
 
     def eliminar_tarea(self, indice):
         if 0 <= indice < len(self.tareas):
             tarea_eliminada = self.tareas.pop(indice)
-            self.guardar_tareas()  # Guardar tareas después de eliminar
+            self.guardar_tareas()
             return tarea_eliminada
         return None
+
+    def eliminar_tarea_completada(self, indice):
+        if 0 <= indice < len(self.tareas_completadas):
+            self.tareas_completadas.pop(indice)
+            self.guardar_tareas()
+            return True
+        return False
 
     def obtener_tarea(self, indice):
         if 0 <= indice < len(self.tareas):
@@ -127,7 +139,7 @@ class ManejadorTareas:
                 "hora": hora
             })
             self.verificar_proximidad_vencimiento(self.tareas[indice])
-            self.guardar_tareas()  # Guardar tareas después de modificar
+            self.guardar_tareas()
             return self._formato_tarea(self.tareas[indice])
         return None
 
@@ -138,7 +150,7 @@ class ManejadorTareas:
                 tarea_completada["completada"] = True
                 tarea_completada["fuera_de_tiempo"] = True
                 self.tareas_completadas.append(tarea_completada)
-                self.guardar_tareas()  # Guardar tareas después de completar
+                self.guardar_tareas()
                 return self._formato_tarea(tarea_completada)
         else:
             if 0 <= indice < len(self.tareas):
@@ -146,7 +158,7 @@ class ManejadorTareas:
                 tarea_completada["completada"] = True
                 tarea_completada["fuera_de_tiempo"] = False
                 self.tareas_completadas.append(tarea_completada)
-                self.guardar_tareas()  # Guardar tareas después de completar
+                self.guardar_tareas()
                 return self._formato_tarea(tarea_completada)
         return None
 
@@ -195,15 +207,3 @@ class ManejadorTareas:
 
         self.tareas.sort(key=lambda x: prioridad_a_numero(x['prioridad']), reverse=True)
         return [self._formato_tarea(tarea) for tarea in self.tareas]
-
-    def verificar_tareas_fuera_de_tiempo(self):
-        hoy = datetime.now()
-        tareas_fuera_tiempo = []
-
-        for tarea in self.tareas:
-            fecha_hora_limite = datetime.strptime(f"{tarea['fecha']} {tarea['hora']}", "%Y-%m-%d %H:%M")
-            if fecha_hora_limite < hoy and not tarea["completada"]:
-                tareas_fuera_tiempo.append(tarea)
-
-        self.tareas_fuera_de_tiempo.extend(tareas_fuera_tiempo)
-        return tareas_fuera_tiempo
