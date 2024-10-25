@@ -316,7 +316,6 @@ class AplicacionListaTareas:
     def ordenar_por_prioridad(self):
         tareas_ordenadas = self.manejador_tareas.ordenar_por_prioridad()
         self.actualizar_lista_tareas(self.lista_tareas, tareas_ordenadas)
-        messagebox.showinfo("Tareas Ordenadas", "Las tareas han sido ordenadas por prioridad de Alta a Baja.")
 
     def actualizar_periodicamente(self):
         self.actualizar_todas_las_listas()

@@ -1,1 +1,1 @@
-{"tareas": [], "tareas_fuera_de_tiempo": [], "tareas_completadas": []}
+{"tareas": [{"tarea": "Hola como estas", "prioridad": "Media", "fecha": "2024-10-28", "hora": "00:00", "completada": false}, {"tarea": "tareas de prueba", "prioridad": "Alta", "fecha": "2024-10-26", "hora": "00:00", "completada": false}], "tareas_fuera_de_tiempo": [], "tareas_completadas": []}
