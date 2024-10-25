@@ -87,7 +87,7 @@ class ManejadorTareas:
                         self.tareas_fuera_de_tiempo = []
                         self.tareas_completadas = []
                 except json.JSONDecodeError:
-                    print("Error al decodificar el archivo JSON. Se inicializarán listas vacías.")
+                    print("Error JSON.")
                     self.tareas = []
                     self.tareas_fuera_de_tiempo = []
                     self.tareas_completadas = []

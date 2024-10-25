@@ -72,23 +72,6 @@ class AplicacionListaTareas:
         self.style = ttk.Style()
         self.style.configure('Transparent.TFrame', background='transparent')
         
-        # Cargar y configurar la imagen de fondo
-        try:
-            # Cargar la imagen
-            imagen = Image.open("imagen_2024-10-09_083216617-removebg-preview.png")  # Asegúrate de tener tu imagen en el directorio
-            
-            # Redimensionar la imagen al tamaño de la ventana
-            imagen = imagen.resize((700, 500), Image.LANCZOS)
-            
-            # Convertir la imagen para tkinter
-            self.imagen_fondo = ImageTk.PhotoImage(imagen)
-            
-            # Crear un label con la imagen de fondo
-            self.fondo_label = tk.Label(self.master, image=self.imagen_fondo)
-            self.fondo_label.place(x=0, y=0, relwidth=1, relheight=1)
-            
-        except Exception as e:
-            print(f"Error al cargar la imagen de fondo: {e}")
         
         self.botones_modificables = []
         self.crear_widgets()
@@ -97,7 +80,7 @@ class AplicacionListaTareas:
     def configurar_fondo(self):
         try:
             # Cargar y redimensionar la imagen de fondo
-            imagen = Image.open("imagen_2024-10-09_083216617-removebg-preview.png")  # Ajusta la ruta según tu imagen
+            imagen = Image.open("Preview.png")  # Ajusta la ruta según tu imagen
             
             # Obtener dimensiones de la ventana
             ancho_ventana = self.master.winfo_screenwidth()
