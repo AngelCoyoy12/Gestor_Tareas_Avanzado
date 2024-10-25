@@ -1,11 +1,10 @@
 #tarea_ui
-import babel.numbers
-import tkinter as tk
-from tkinter import messagebox, simpledialog, ttk
+import tkinter as tk #interfaz grafica
+from tkinter import messagebox, simpledialog, ttk #mensajes texto, widgets y dialogos
 from tkcalendar import DateEntry
 import datetime
 from tarea_logica import ManejadorTareas
-from PIL import Image, ImageTk
+from PIL import Image, ImageTk #imagenes a formato tk
 
 class VentanaEmergente(simpledialog.Dialog):
     def __init__(self, parent, title, tarea=None):

@@ -1,18 +1,12 @@
-import json
-import os
-import babel.numbers
-from datetime import datetime
-from notifypy import Notify
-import threading
-import time
+#tarealogica.py
 
-import json
-import os
-import babel.numbers
-from datetime import datetime
-from notifypy import Notify
-import threading
-import time
+import json  # Manejo de archivos JSON.
+import os  # Interacción con el sistema operativo.
+from datetime import datetime  # Manejo de fechas y horas.
+from notifypy import Notify  # Envío de notificaciones.
+import threading  # Manejo de hilos.
+import time  # Funciones relacionadas con el tiempo.
+
 
 class ManejadorTareas:
     def __init__(self):
